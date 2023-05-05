@@ -70,8 +70,8 @@ function App() {
 
   return (
     <>
-      <h1>Форма выбора переговорных</h1>
       <form className="form" ref={formRef}>
+        <h1>Форма выбора переговорных</h1>
         <Select
           options={[{ value: "Башня А" }, { value: "Башня Б" }]}
           onSelect={setTower}
@@ -87,7 +87,7 @@ function App() {
           showTime={{ format: "HH:mm" }}
           format="DD-MM-YYYY HH:mm"
           placeholder="Выберите дату и время"
-          onOk={(value) => setDate(value)}
+          onOk={setDate}
           value={date}
           locale={locale}
         />
