@@ -1,10 +1,8 @@
-import { createRef, useRef, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { createRef, useState } from "react";
 import "./App.css";
 import { DatePicker, Select, Input, Button } from "antd";
 import locale from "antd/es/date-picker/locale/ru_RU";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 
 function App() {
   const { TextArea } = Input;
