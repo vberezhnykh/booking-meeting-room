@@ -1,8 +1,10 @@
 import { createRef, useState } from "react";
 import "./App.css";
-import { DatePicker, Select, Input, Button } from "antd";
+import { DatePicker, Select, Input, Button, TimePicker } from "antd";
+import type { RangePickerProps } from "antd/es/date-picker";
 import locale from "antd/es/date-picker/locale/ru_RU";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
+import "dayjs/locale/ru";
 
 function App() {
   const { TextArea } = Input;
@@ -47,6 +49,7 @@ function App() {
     setMeetingRoom(MEETING_ROOM_DEFAULT_VALUE);
     setDate(null);
     setComment("");
+    setIsDateSelected(false);
   };
 
   const showFormValues = () => {
@@ -68,44 +71,99 @@ function App() {
     );
   };
 
+  const disabledDate: RangePickerProps["disabledDate"] = (current) => {
+    return current < dayjs().add(-1, "d");
+  };
+
+  const range = (start: number, end: number) => {
+    const result = [];
+
+    for (let i = start; i < end; i++) {
+      result.push(i);
+    }
+    return result;
+  };
+
+  const isToday = (e: Dayjs | null) => {
+    if (e == null) return;
+    const today = new Date();
+    return (
+      e.date() == today.getDate() &&
+      e.month() == today.getMonth() &&
+      e.year() == today.getFullYear()
+    );
+  };
+
+  const disabledDateTime = () => ({
+    disabledHours: () => {
+      if (isToday(date)) return range(0, 24).splice(0, dayjs().hour());
+      return [];
+    },
+    disabledMinutes: () => {
+      if (isToday(date)) return range(0, 59).splice(0, dayjs().minute());
+      return [];
+    },
+  });
+
+  const [isDateSelected, setIsDateSelected] = useState(false);
+
   return (
     <>
-      <form className="form" ref={formRef}>
-        <h1>Форма выбора переговорных</h1>
-        <Select
-          options={[{ value: "Башня А" }, { value: "Башня Б" }]}
-          onSelect={setTower}
-          value={tower}
-        />
-        <Select value={floor} options={getFloorValues()} onSelect={setFloor} />
-        <Select
-          value={meetingRoom}
-          options={getMeetingRoomValues()}
-          onSelect={setMeetingRoom}
-        />
-        <DatePicker
-          showTime={{ format: "HH:mm" }}
-          format="DD-MM-YYYY HH:mm"
-          placeholder="Выберите дату и время"
-          onOk={setDate}
-          value={date}
-          locale={locale}
-        />
-        <TextArea
-          autoSize
-          placeholder="Поле для комментариев..."
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-        />
-        <fieldset className="form__buttons">
-          <Button type="primary" onClick={showFormValues}>
-            Отправить
-          </Button>
-          <Button type="primary" danger onClick={resetFormInputs}>
-            Очистить
-          </Button>
-        </fieldset>
-      </form>
+      <main>
+        <form className="form" ref={formRef}>
+          <h1>Форма бронирования переговорных</h1>
+          <Select
+            options={[{ value: "Башня А" }, { value: "Башня Б" }]}
+            onSelect={setTower}
+            value={tower}
+          />
+          <Select
+            value={floor}
+            options={getFloorValues()}
+            onSelect={setFloor}
+          />
+          <Select
+            value={meetingRoom}
+            options={getMeetingRoomValues()}
+            onSelect={setMeetingRoom}
+          />
+          <fieldset className="date-time-container">
+            <DatePicker
+              placeholder="Выберите дату"
+              onChange={(e) => {
+                setDate(e);
+                setIsDateSelected(true);
+              }}
+              value={date}
+              locale={locale}
+              disabledDate={disabledDate}
+              className="datepicker"
+              /* disabledTime={disabledDateTime} */
+            />
+            <TimePicker.RangePicker
+              showSecond={false}
+              disabled={!isDateSelected}
+              locale={locale}
+              disabledTime={disabledDateTime}
+            />
+          </fieldset>
+          <TextArea
+            autoSize
+            placeholder="Поле для комментариев..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+          <fieldset className="form__buttons">
+            <Button type="primary" onClick={showFormValues}>
+              Отправить
+            </Button>
+            <Button type="primary" danger onClick={resetFormInputs}>
+              Очистить
+            </Button>
+          </fieldset>
+        </form>
+      </main>
+      <footer>GitHub</footer>
     </>
   );
 }

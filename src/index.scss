@@ -8,12 +8,23 @@
 }
 
 body {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   height: 100vh;
   margin: 0;
-  padding: 0;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  width: 100%;
 }
 
 .form {
@@ -38,4 +49,16 @@ body {
   button {
     width: 13rem;
   }
+}
+
+.date-time-container {
+  display: flex;
+  border: none;
+  padding: 0;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.datepicker {
+  flex-grow: 1;
 }
