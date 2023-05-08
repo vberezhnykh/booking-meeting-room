@@ -1,6 +1,6 @@
 import { createRef, useState } from "react";
 import "./App.css";
-import { DatePicker, Select, Input, Button, TimePicker } from "antd";
+import { DatePicker, Select, Input, Button, TimePicker, message } from "antd";
 import locale from "antd/es/date-picker/locale/ru_RU";
 import { Dayjs } from "dayjs";
 import "dayjs/locale/ru";
@@ -31,19 +31,31 @@ function App() {
     setMeetingRoom(null);
     setDate(null);
     setIsDateSelected(false);
-    setTime([null, null]);
+    setTime(null);
     setComment("");
   };
 
+  const [messageApi, contextHolder] = message.useMessage();
+  const warning = (message: string) => {
+    messageApi.open({
+      type: "warning",
+      content: message,
+    });
+  };
+
   const showFormValues = () => {
-    if (
-      tower == null ||
-      floor == null ||
-      meetingRoom == null ||
-      date === null ||
-      time === null
-    )
+    const fields = [tower, floor, meetingRoom, date, time];
+    if (fields.includes(null)) {
+      const errorFields = [];
+      tower == null ? errorFields.push("башню") : false;
+      floor == null ? errorFields.push("этаж") : false;
+      meetingRoom == null ? errorFields.push("переговорную") : false;
+      date == null ? errorFields.push("дату") : false;
+      time == null ? errorFields.push("время") : false;
+      warning(`Необходимо выбрать ${errorFields.join(", ")}`);
       return;
+    }
+
     console.log(
       JSON.stringify({
         tower,
@@ -61,6 +73,7 @@ function App() {
       <main>
         <form className="form" ref={formRef}>
           <h1>Форма бронирования переговорных</h1>
+          {contextHolder}
           <Select
             options={[{ value: "Башня А" }, { value: "Башня Б" }]}
             onSelect={setTower}
@@ -85,7 +98,10 @@ function App() {
               onChange={(e) => {
                 setDate(e);
                 if (e != null) setIsDateSelected(true);
-                else setIsDateSelected(false);
+                else {
+                  setIsDateSelected(false);
+                  setTime(null);
+                }
               }}
               value={date}
               locale={locale}
@@ -105,6 +121,7 @@ function App() {
                   setTime([secondDate, firstDate]);
                 else setTime(e);
               }}
+              defaultValue={null}
               value={time}
             />
           </fieldset>
