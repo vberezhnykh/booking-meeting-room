@@ -1,38 +1,20 @@
 import { createRef, useState } from "react";
 import "./App.css";
 import { DatePicker, Select, Input, Button, TimePicker } from "antd";
-import type { RangePickerProps } from "antd/es/date-picker";
 import locale from "antd/es/date-picker/locale/ru_RU";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import "dayjs/locale/ru";
+import {
+  getFloorValues,
+  getMeetingRoomValues,
+  disabledDate,
+  disabledDateTime,
+} from "./utils";
 
 function App() {
   const { TextArea } = Input;
   const formRef = createRef<HTMLFormElement>();
 
-  const getFloorValues = () => {
-    const floorValues = [];
-    const MIN_FLOOR = 3;
-    const MAX_FLOOR = 27;
-    for (let i = MIN_FLOOR; i <= MAX_FLOOR; i++) {
-      floorValues.push({
-        value: i,
-      });
-    }
-    return floorValues;
-  };
-
-  const getMeetingRoomValues = () => {
-    const meetingRoomValues = [];
-    const MIN = 1;
-    const MAX = 10;
-    for (let i = MIN; i <= MAX; i++) {
-      meetingRoomValues.push({
-        value: `Переговорная №${i}`,
-      });
-    }
-    return meetingRoomValues;
-  };
   const TOWER_INPUT_DEFAULT_VALUE = "Выберите башню";
   const FLOOR_INPUT_DEFAULT_VALUE = "Выберите этаж";
   const MEETING_ROOM_DEFAULT_VALUE = "Выберите переговорную";
@@ -42,6 +24,7 @@ function App() {
   const [meetingRoom, setMeetingRoom] = useState(MEETING_ROOM_DEFAULT_VALUE);
   const [date, setDate] = useState<Dayjs | null>(null);
   const [comment, setComment] = useState("");
+  const [isDateSelected, setIsDateSelected] = useState(false);
 
   const resetFormInputs = () => {
     setTower(TOWER_INPUT_DEFAULT_VALUE);
@@ -70,42 +53,6 @@ function App() {
       })
     );
   };
-
-  const disabledDate: RangePickerProps["disabledDate"] = (current) => {
-    return current < dayjs().add(-1, "d");
-  };
-
-  const range = (start: number, end: number) => {
-    const result = [];
-
-    for (let i = start; i < end; i++) {
-      result.push(i);
-    }
-    return result;
-  };
-
-  const isToday = (e: Dayjs | null) => {
-    if (e == null) return;
-    const today = new Date();
-    return (
-      e.date() == today.getDate() &&
-      e.month() == today.getMonth() &&
-      e.year() == today.getFullYear()
-    );
-  };
-
-  const disabledDateTime = () => ({
-    disabledHours: () => {
-      if (isToday(date)) return range(0, 24).splice(0, dayjs().hour());
-      return [];
-    },
-    disabledMinutes: () => {
-      if (isToday(date)) return range(0, 59).splice(0, dayjs().minute());
-      return [];
-    },
-  });
-
-  const [isDateSelected, setIsDateSelected] = useState(false);
 
   return (
     <>
@@ -138,7 +85,6 @@ function App() {
               locale={locale}
               disabledDate={disabledDate}
               className="datepicker"
-              /* disabledTime={disabledDateTime} */
             />
             <TimePicker.RangePicker
               showSecond={false}
