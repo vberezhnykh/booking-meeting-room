@@ -11,6 +11,8 @@ import {
   disabledDateTime,
 } from "./utils";
 
+type RangeValue = [Dayjs | null, Dayjs | null] | null;
+
 function App() {
   const { TextArea } = Input;
   const formRef = createRef<HTMLFormElement>();
@@ -23,6 +25,7 @@ function App() {
   const [floor, setFloor] = useState(FLOOR_INPUT_DEFAULT_VALUE);
   const [meetingRoom, setMeetingRoom] = useState(MEETING_ROOM_DEFAULT_VALUE);
   const [date, setDate] = useState<Dayjs | null>(null);
+  const [time, setTime] = useState<RangeValue>(null);
   const [comment, setComment] = useState("");
   const [isDateSelected, setIsDateSelected] = useState(false);
 
@@ -31,8 +34,9 @@ function App() {
     setFloor(FLOOR_INPUT_DEFAULT_VALUE);
     setMeetingRoom(MEETING_ROOM_DEFAULT_VALUE);
     setDate(null);
-    setComment("");
     setIsDateSelected(false);
+    setTime([null, null]);
+    setComment("");
   };
 
   const showFormValues = () => {
@@ -40,7 +44,8 @@ function App() {
       tower === TOWER_INPUT_DEFAULT_VALUE ||
       floor === FLOOR_INPUT_DEFAULT_VALUE ||
       meetingRoom === MEETING_ROOM_DEFAULT_VALUE ||
-      date === null
+      date === null ||
+      time === null
     )
       return;
     console.log(
@@ -49,6 +54,7 @@ function App() {
         floor,
         meetingRoom,
         date,
+        time,
         comment,
       })
     );
@@ -90,7 +96,15 @@ function App() {
               showSecond={false}
               disabled={!isDateSelected}
               locale={locale}
-              disabledTime={disabledDateTime}
+              disabledTime={() => disabledDateTime(date)}
+              onOk={(e) => {
+                if (e == null) return;
+                const [firstDate, secondDate] = e;
+                if (firstDate?.isAfter(secondDate))
+                  setTime([secondDate, firstDate]);
+                else setTime(e);
+              }}
+              value={time}
             />
           </fieldset>
           <TextArea
