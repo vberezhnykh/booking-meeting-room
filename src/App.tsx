@@ -107,6 +107,7 @@ function App() {
               locale={locale}
               disabledDate={disabledDate}
               className="datepicker"
+              inputReadOnly
             />
             <TimePicker.RangePicker
               showSecond={false}
@@ -123,6 +124,7 @@ function App() {
               }}
               defaultValue={null}
               value={time}
+              inputReadOnly
             />
           </fieldset>
           <TextArea
