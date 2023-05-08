@@ -17,22 +17,18 @@ function App() {
   const { TextArea } = Input;
   const formRef = createRef<HTMLFormElement>();
 
-  const TOWER_INPUT_DEFAULT_VALUE = "Выберите башню";
-  const FLOOR_INPUT_DEFAULT_VALUE = "Выберите этаж";
-  const MEETING_ROOM_DEFAULT_VALUE = "Выберите переговорную";
-
-  const [tower, setTower] = useState(TOWER_INPUT_DEFAULT_VALUE);
-  const [floor, setFloor] = useState(FLOOR_INPUT_DEFAULT_VALUE);
-  const [meetingRoom, setMeetingRoom] = useState(MEETING_ROOM_DEFAULT_VALUE);
+  const [tower, setTower] = useState(null);
+  const [floor, setFloor] = useState(null);
+  const [meetingRoom, setMeetingRoom] = useState(null);
   const [date, setDate] = useState<Dayjs | null>(null);
   const [time, setTime] = useState<RangeValue>(null);
   const [comment, setComment] = useState("");
   const [isDateSelected, setIsDateSelected] = useState(false);
 
   const resetFormInputs = () => {
-    setTower(TOWER_INPUT_DEFAULT_VALUE);
-    setFloor(FLOOR_INPUT_DEFAULT_VALUE);
-    setMeetingRoom(MEETING_ROOM_DEFAULT_VALUE);
+    setTower(null);
+    setFloor(null);
+    setMeetingRoom(null);
     setDate(null);
     setIsDateSelected(false);
     setTime([null, null]);
@@ -41,9 +37,9 @@ function App() {
 
   const showFormValues = () => {
     if (
-      tower === TOWER_INPUT_DEFAULT_VALUE ||
-      floor === FLOOR_INPUT_DEFAULT_VALUE ||
-      meetingRoom === MEETING_ROOM_DEFAULT_VALUE ||
+      tower == null ||
+      floor == null ||
+      meetingRoom == null ||
       date === null ||
       time === null
     )
@@ -69,23 +65,27 @@ function App() {
             options={[{ value: "Башня А" }, { value: "Башня Б" }]}
             onSelect={setTower}
             value={tower}
+            placeholder="Выберите башню"
           />
           <Select
             value={floor}
             options={getFloorValues()}
             onSelect={setFloor}
+            placeholder="Выберите этаж"
           />
           <Select
             value={meetingRoom}
             options={getMeetingRoomValues()}
             onSelect={setMeetingRoom}
+            placeholder="Выберите переговорную"
           />
           <fieldset className="date-time-container">
             <DatePicker
               placeholder="Выберите дату"
               onChange={(e) => {
                 setDate(e);
-                setIsDateSelected(true);
+                if (e != null) setIsDateSelected(true);
+                else setIsDateSelected(false);
               }}
               value={date}
               locale={locale}
@@ -97,6 +97,7 @@ function App() {
               disabled={!isDateSelected}
               locale={locale}
               disabledTime={() => disabledDateTime(date)}
+              hideDisabledOptions={true}
               onOk={(e) => {
                 if (e == null) return;
                 const [firstDate, secondDate] = e;

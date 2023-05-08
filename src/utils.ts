@@ -53,8 +53,9 @@ export const disabledDateTime = (date: Dayjs | null) => ({
     if (isToday(date)) return range(0, 24).splice(0, dayjs().hour());
     return [];
   },
-  disabledMinutes: () => {
-    if (isToday(date)) return range(0, 59).splice(0, dayjs().minute());
+  disabledMinutes: (hour: number) => {
+    if (isToday(date) && date?.hour() === hour)
+      return range(0, 59).splice(0, dayjs().minute());
     return [];
   },
 });
