@@ -1,5 +1,4 @@
 import { createRef, useState } from "react";
-import "./App.css";
 import { DatePicker, Select, Input, Button, TimePicker, message } from "antd";
 import { GithubOutlined } from "@ant-design/icons";
 import locale from "antd/es/date-picker/locale/ru_RU";
@@ -11,7 +10,6 @@ import {
   disabledDate,
   disabledDateTime,
 } from "./utils";
-import Link from "antd/es/typography/Link";
 
 type RangeValue = [Dayjs | null, Dayjs | null] | null;
 
@@ -45,6 +43,13 @@ function App() {
     });
   };
 
+  const success = (message: string) => {
+    messageApi.open({
+      type: "success",
+      content: message,
+    });
+  };
+
   const showFormValues = () => {
     const fields = [tower, floor, meetingRoom, date, time];
     if (fields.includes(null)) {
@@ -58,6 +63,7 @@ function App() {
       return;
     }
 
+    success("Данные отправлены в консоль");
     console.log(
       JSON.stringify({
         tower,
