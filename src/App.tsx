@@ -1,6 +1,7 @@
 import { createRef, useState } from "react";
 import "./App.css";
 import { DatePicker, Select, Input, Button, TimePicker, message } from "antd";
+import { GithubOutlined } from "@ant-design/icons";
 import locale from "antd/es/date-picker/locale/ru_RU";
 import { Dayjs } from "dayjs";
 import "dayjs/locale/ru";
@@ -10,6 +11,7 @@ import {
   disabledDate,
   disabledDateTime,
 } from "./utils";
+import Link from "antd/es/typography/Link";
 
 type RangeValue = [Dayjs | null, Dayjs | null] | null;
 
@@ -143,7 +145,15 @@ function App() {
           </fieldset>
         </form>
       </main>
-      <footer>GitHub</footer>
+      <footer>
+        <a
+          href="https://github.com/vberezhnykh"
+          target="_blank"
+          className="github"
+        >
+          <GithubOutlined />
+        </a>
+      </footer>
     </>
   );
 }

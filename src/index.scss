@@ -62,3 +62,11 @@ main {
 .datepicker {
   flex-grow: 1;
 }
+
+.github {
+  font-size: 2rem;
+  color: black;
+  &:hover {
+    opacity: 0.8;
+  }
+}
